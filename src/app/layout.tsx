@@ -14,24 +14,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "Denials Doctor - AI-Powered Healthcare Denial Management",
+  description: "AI-powered denial management platform for healthcare RCM. Analyze denials, generate appeals, track payer behavior, and prevent future denials across all medical specialties.",
+  keywords: ["denial management", "denials doctor", "RCM", "healthcare", "AI", "appeals", "medical coding", "revenue cycle", "denialsdoctor.com"],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "Denials Doctor - AI-Powered Healthcare Denial Management",
+    description: "AI-powered denial management platform for healthcare RCM",
+    url: "https://denialsdoctor.com",
+    siteName: "Denials Doctor",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "Denials Doctor - AI-Powered Healthcare Denial Management",
+    description: "AI-powered denial management platform for healthcare RCM",
   },
 };
 

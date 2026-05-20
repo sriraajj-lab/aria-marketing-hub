@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://www.mavennet.com/blog/understanding-multi-ai-agent-patterns",
+    "name": "Understanding Multi-AI Agent Patterns: Why Architecture Matters",
+    "snippet": "A central \"Orchestrator\" agent (the head chef) breaks down the goal, assigns sub-tasks, and makes sure everyone's work fits together. Frameworks ...",
+    "host_name": "www.mavennet.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.dailydoseofds.com/ai-agents-crash-course-part-12-with-implementation",
+    "name": "Implementing Multi-agent Agentic Pattern From Scratch",
+    "snippet": "As discussed earlier, a multi-agent pattern structures an AI workflow as a team of agents that work together, each with a well-defined role.",
+    "host_name": "www.dailydoseofds.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/@alessandro.a.pagliaro/hello-agentic-ai-plan-and-execute-pattern-03ef9dd67b32",
+    "name": "8-Hello Agentic AI: Plan-and-Execute Pattern | by Alessandro",
+    "snippet": "In this tutorial, we've explored how to implement Plan-and-Execute pattern for AI agents. Now when you build your own agentic applications, ...",
+    "host_name": "medium.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=c7MBGhN1hQ8",
+    "name": "Sequential Design Pattern for AI Agents (Simple, Predictable",
+    "snippet": "Sequential Design Pattern: Chapter: 00:00 Introduction 00:47 Sequential Design Pattern - architecture 01:22 Why to use Sequential Design ...",
+    "host_name": "www.youtube.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.instagram.com/reel/DXdXlYrD9SL",
+    "name": "AI agents are specialized software tools designed to perform specific",
+    "snippet": "AI agents are specialized software tools designed to perform specific, predefined tasks with limited autonomy. In contrast, Agentic AI ...",
+    "host_name": "www.instagram.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://ai.plainenglish.io/5-ai-agent-workflow-design-patterns-every-developer-should-know-e8b995c232b7",
+    "name": "5 AI Agent Workflow Design Patterns Every Developer Should Know",
+    "snippet": "The idea is to break down complex tasks dynamically and combine them using AI. This design pattern is used mostly for complex tasks. Press ...",
+    "host_name": "ai.plainenglish.io",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/pulse/ai-agent-workflow-patterns-production-grade-guide-abhishek-gautam-xw9mf",
+    "name": "AI Agent Workflow Patterns: A Production-Grade Guide - LinkedIn",
+    "snippet": "Manager agent decomposes complex task into subtasks, delegates to specialized worker agents, then synthesizes results. When It Works. Complex ...",
+    "host_name": "www.linkedin.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://tallyfy.com/workflow-patterns-ai-agents",
+    "name": "Three workflow patterns every AI agent needs - Tallyfy",
+    "snippet": "What are AI agent workflow patterns. AI agent workflow patterns are the structural blueprints that tell an AI agent how to execute multi-step ...",
+    "host_name": "tallyfy.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://code.likeagirl.io/ai-agents-orchestration-design-patterns-87562e54d190",
+    "name": "AI Agents Orchestration Design Patterns - Code Like A Girl",
+    "snippet": "The Loop Agent Pattern is a fundamental AI workflow where an agent repeatedly executes a sequence of specialized subagents until a specific ...",
+    "host_name": "code.likeagirl.io",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.patronus.ai/ai-agent-development",
+    "name": "AI Agent Development, Evaluation, and Optimization - Patronus AI",
+    "snippet": "This article explores agentic system architecture, compares AI agent frameworks, provides code examples, and introduces methods for measuring the performance ...",
+    "host_name": "www.patronus.ai",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

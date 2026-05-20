@@ -1,97 +1,124 @@
 import { create } from 'zustand';
-import type { AccessLevel, AppView, PracticeType, DenialRecord, HealthScanReport } from './types';
-import { sampleDenials } from './sample-data';
-import { generateHealthScan } from './health-scan';
+import { ViewType, OverviewReport, AppUser, BatchJob, AccessLevel, PracticeType } from './types';
 
 interface AppState {
-  currentView: AppView;
-  accessLevel: AccessLevel | null;
-  practiceType: PracticeType | null;
-  practiceName: string;
-  contractSigned: boolean;
+  // Navigation
+  currentView: ViewType;
   selectedDenialId: string | null;
-  denials: DenialRecord[];
-  healthScan: HealthScanReport | null;
-  isUploading: boolean;
+  selectedReportId: string | null;
   sidebarOpen: boolean;
 
-  // Actions
-  setView: (view: AppView) => void;
-  setAccessLevel: (level: AccessLevel) => void;
-  setPracticeType: (type: PracticeType) => void;
-  setPracticeName: (name: string) => void;
-  setContractSigned: (signed: boolean) => void;
-  selectDenial: (id: string | null) => void;
-  setDenials: (denials: DenialRecord[]) => void;
-  setHealthScan: (report: HealthScanReport) => void;
-  setUploading: (uploading: boolean) => void;
-  setSidebarOpen: (open: boolean) => void;
-  simulateUpload: () => void;
-  updateDenialStatus: (id: string, status: DenialRecord['status']) => void;
+  // Auth & Access
+  contractSigned: boolean;
+  currentUser: AppUser | null;
+  sessionToken: string | null;
 
-  // Helpers
-  canAccess: (requiredLevel: AccessLevel) => boolean;
-  getSelectedDenial: () => DenialRecord | undefined;
+  // Practice Type (Medical / Dental)
+  practiceType: PracticeType | null;
+
+  // Access Level (1, 2, 3)
+  accessLevel: AccessLevel | null;
+
+  // Batch Processing
+  activeBatchJobs: BatchJob[];
+
+  // Notifications
+  notifications: Notification[];
+
+  // Actions
+  setCurrentView: (view: ViewType) => void;
+  setSelectedDenialId: (id: string | null) => void;
+  setSelectedReportId: (id: string | null) => void;
+  setSidebarOpen: (open: boolean) => void;
+  setContractSigned: (signed: boolean) => void;
+  setCurrentUser: (user: AppUser | null) => void;
+  setSessionToken: (token: string | null) => void;
+  setPracticeType: (type: PracticeType) => void;
+  setAccessLevel: (level: AccessLevel) => void;
+  addBatchJob: (job: BatchJob) => void;
+  updateBatchJob: (id: string, updates: Partial<BatchJob>) => void;
+  addNotification: (notification: Omit<Notification, 'id' | 'createdAt'>) => void;
+  dismissNotification: (id: string) => void;
+  navigateToDenial: (id: string) => void;
+  navigateToReport: (id: string) => void;
+  navigateBack: () => void;
+}
+
+interface Notification {
+  id: string;
+  type: 'info' | 'warning' | 'error' | 'success';
+  title: string;
+  message: string;
+  createdAt: string;
+  dismissed: boolean;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
   currentView: 'landing',
-  accessLevel: null,
-  practiceType: null,
-  practiceName: '',
-  contractSigned: false,
   selectedDenialId: null,
-  denials: [],
-  healthScan: null,
-  isUploading: false,
-  sidebarOpen: false,
+  selectedReportId: null,
+  sidebarOpen: true,
+  contractSigned: false,
+  currentUser: null,
+  sessionToken: null,
+  practiceType: null,
+  accessLevel: null,
+  activeBatchJobs: [],
+  notifications: [],
 
-  setView: (view) => set({ currentView: view }),
-  setAccessLevel: (level) => set({ accessLevel: level }),
-  setPracticeType: (type) => set({ practiceType: type }),
-  setPracticeName: (name) => set({ practiceName: name }),
-  setContractSigned: (signed) => set({ contractSigned: signed }),
-  selectDenial: (id) => set({ selectedDenialId: id }),
-  setDenials: (denials) => set({ denials }),
-  setHealthScan: (report) => set({ healthScan: report }),
-  setUploading: (uploading) => set({ isUploading: uploading }),
+  setCurrentView: (view) =>
+    set({
+      currentView: view,
+      selectedDenialId: view !== 'denial-detail' ? null : get().selectedDenialId,
+      selectedReportId: view !== 'overview-report' ? null : get().selectedReportId,
+    }),
+  setSelectedDenialId: (id) => set({ selectedDenialId: id }),
+  setSelectedReportId: (id) => set({ selectedReportId: id }),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
+  setContractSigned: (signed) => set({ contractSigned: signed }),
+  setCurrentUser: (user) => set({ currentUser: user }),
+  setSessionToken: (token) => set({ sessionToken: token }),
+  setPracticeType: (type) => set({ practiceType: type }),
+  setAccessLevel: (level) => set({ accessLevel: level }),
 
-  simulateUpload: () => {
-    set({ isUploading: true });
-    const state = get();
-    const denials = sampleDenials(state.practiceType || 'medical');
-    const healthScan = generateHealthScan(
-      denials,
-      state.practiceName || 'Sample Medical Practice',
-      state.practiceType || 'medical'
-    );
-    setTimeout(() => {
-      set({
-        denials,
-        healthScan,
-        isUploading: false,
-        currentView: 'dashboard',
-      });
-    }, 2000);
-  },
-
-  updateDenialStatus: (id, status) => {
+  addBatchJob: (job) =>
+    set((state) => ({ activeBatchJobs: [...state.activeBatchJobs, job] })),
+  updateBatchJob: (id, updates) =>
     set((state) => ({
-      denials: state.denials.map((d) =>
-        d.id === id ? { ...d, status } : d
+      activeBatchJobs: state.activeBatchJobs.map((j) =>
+        j.id === id ? { ...j, ...updates } : j
       ),
-    }));
-  },
+    })),
 
-  canAccess: (requiredLevel) => {
-    const { accessLevel } = get();
-    if (!accessLevel) return false;
-    return accessLevel >= requiredLevel;
-  },
+  addNotification: (notification) =>
+    set((state) => ({
+      notifications: [
+        ...state.notifications,
+        {
+          ...notification,
+          id: `notif-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          dismissed: false,
+        },
+      ],
+    })),
+  dismissNotification: (id) =>
+    set((state) => ({
+      notifications: state.notifications.map((n) =>
+        n.id === id ? { ...n, dismissed: true } : n
+      ),
+    })),
 
-  getSelectedDenial: () => {
-    const { denials, selectedDenialId } = get();
-    return denials.find((d) => d.id === selectedDenialId);
+  navigateToDenial: (id) => set({ currentView: 'denial-detail', selectedDenialId: id }),
+  navigateToReport: (id) => set({ currentView: 'overview-report', selectedReportId: id }),
+  navigateBack: () => {
+    const current = get().currentView;
+    if (current === 'denial-detail') {
+      set({ currentView: 'denials', selectedDenialId: null });
+    } else if (current === 'overview-report') {
+      set({ currentView: 'upload', selectedReportId: null });
+    } else {
+      set({ currentView: 'upload', selectedDenialId: null });
+    }
   },
 }));
