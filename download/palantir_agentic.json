@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://palantir.com/docs/foundry/architecture-center/aip-architecture",
+    "name": "AIP architecture overview - Palantir",
+    "snippet": "End-to-end observability: Providing monitoring tools for every step of AI-driven workflows and agentic processes. This includes fine-grained monitoring for all ...",
+    "host_name": "palantir.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://palantir.com/docs/foundry/architecture-center/overview",
+    "name": "Overview • Architecture center - Palantir",
+    "snippet": "The heart of Palantir's architecture is the Ontology system. The Ontology integrates an enterprise's data, logic, action, and security policies into an ...",
+    "host_name": "palantir.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/posts/nityamjigyasu_palantir-agenticai-aigovernance-activity-7431548277172428800-X-Y6",
+    "name": "Palantir's AIP Architecture: Surveillance or Governance? - LinkedIn",
+    "snippet": "Agents, Graphs, Ontologies. 2mo. Palantir's End-to-End Agentic Architecture is a useful blueprint for the rest of us: treat ontology as your ...",
+    "host_name": "www.linkedin.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=SePXznjZ-1A",
+    "name": "Palantir's AIP Lead Jack Dobson at AIPCon 6 - YouTube",
+    "snippet": "Palantir's customers operate in the most mission critical, sensitive and competitive environments - this demands more from the systems on ...",
+    "host_name": "www.youtube.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://blog.palantir.com/securing-agents-in-production-agentic-runtime-1-5191a0715240",
+    "name": "Securing Agents in Production (Agentic Runtime, #1) - Palantir Blog",
+    "snippet": "This blog post explores the security architecture of Palantir AIP's Agentic Runtime — from insulated orchestration to provenance-based tool ...",
+    "host_name": "blog.palantir.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://kenhuangus.substack.com/p/a-technical-follow-up-building-an",
+    "name": "A Technical Follow-Up: Building an Ontology and Wiring  - Agentic AI",
+    "snippet": "A Technical Follow-Up: Building an Ontology and Wiring It into Agentic AI Applications with Palantir Foundry and AIP. Jan 14, 2026. ∙ Paid. 16.",
+    "host_name": "kenhuangus.substack.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.palantir.com/platforms/aip",
+    "name": "Palantir Artificial Intelligence Platform",
+    "snippet": "Build AI apps, actions, and agents in Workflow Builder — an intuitive workspace designed with next-gen AI builders in mind.",
+    "host_name": "www.palantir.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/posts/palantir-technologies_the-ontology-is-the-substrate-through-which-activity-7366485022259810304-JLs1",
+    "name": "Palantir Chief Architect on Ontology and AI collaboration - LinkedIn",
+    "snippet": "The Ontology is the substrate through which humans and AI work together to create operational value — rooted in your business, ...",
+    "host_name": "www.linkedin.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://x.com/hyperindexed/status/2024464673127399527?lang=en",
+    "name": "Palantir AIP provides an end-to-end agentic architecture.",
+    "snippet": "Akshay Krishnaswamy (@hyperindexed). 28 replies. Palantir AIP provides an end-to-end agentic architecture.",
+    "host_name": "x.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://palantir.com/docs/foundry/platform-overview/overview",
+    "name": "Platform overview - Palantir",
+    "snippet": "Platform overview. Palantir AIP powers real-time, AI-driven decision-making in the most critical commercial and government contexts around the world.",
+    "host_name": "palantir.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]
