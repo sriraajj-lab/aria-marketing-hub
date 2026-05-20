@@ -26,3 +26,35 @@ Stage Summary:
 - Appeal agent has verified citation database (42 CFR, SSA, NCCI Manual, LCDs) — never invents citations
 - Orchestrator cross-validates agent outputs for contradictions
 - Legacy agents preserved — no breaking changes to existing API routes
+---
+Task ID: 1
+Agent: Main Agent
+Task: Restructure agent system from 15 agents to 6 functional agents with AI code generation
+
+Work Log:
+- Examined all 30+ agent files in the denial-doctor repo
+- Determined that 6 functional agents already existed (eligibility, demographics, coding, scrubber, appeal, orchestrator) but the old 15-agent registration and references remained
+- Enhanced Coding Agent to generate corrected CPT/ICD-10 codes when old codes are wrong:
+  - Rule-based corrections first (NCCI edits, coverage rules, modifiers)
+  - AI code generation as fallback when rule-based corrections insufficient
+  - AI-generated corrections always flagged with source='ai_generated' and riskLevel='high'
+  - Code format validation (CPT = 4-5 digits, ICD-10 = letter+digits)
+  - Confidence capped at 0.75 when AI-generated corrections present
+  - All AI-generated corrections require human review
+- Cleaned up agent index: only 6 agents registered with orchestrator
+- Updated conductor: 6-agent agentLevelMap
+- Updated workflows-v2: added code_generation step, removed legacy agent references
+- Updated schemas.ts and schemas-v2.ts: imports from 6 agent files
+- Fixed types.ts: "16 AI agents" → "6 AI agents"
+- Updated denialsdoctor.com landing page:
+  - Replaced 15-agent grid with 6 functional agent cards
+  - Added pipeline flow visualization
+  - Added anti-hallucination guardrails explanation
+  - Updated all references from 15/16 to 6
+  - Updated L2 description to mention AI code generation
+- Synced dharma-denial-doctor with same changes
+
+Stage Summary:
+- Coding Agent now GENERATES corrected codes, not just validates
+- All 3 repos pushed: denial-doctor, denialsdoctorwebpage, dharma-denial-doctor
+- Website now clearly explains 6-agent architecture with pipeline visualization
