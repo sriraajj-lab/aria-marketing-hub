@@ -19,3 +19,31 @@ Stage Summary:
 - MODIFIED: /src/lib/data.ts — Added addDenials() function + codeType/practiceType in mapDenialFromDB
 - MODIFIED: /src/components/upload-view.tsx — Shows detected format info, billing systems list, better error messages
 - Job apps submitted: HealthRecon AVP RCM, Country Manager RCM, Denials Manager (3 applications confirmed)
+
+---
+Task ID: 2
+Agent: Main
+Task: Push CSV Normalizer Layer code to GitHub and deploy to both denialsdoctor and dharma denials doctor apps
+
+Work Log:
+- Investigated codebase structure: 3 project directories (denial-doctor, denial-doctor-app, dharma-denial-doctor)
+- Found CSV fix + normalizer changes were in dharma-denial-doctor (uncommitted)
+- Committed and pushed dharma-denial-doctor to GitHub (sriraajj-lab/dharma-denial-doctor) - commit 7b9ae24
+- Synced CSV normalizer changes to denial-doctor (public version with level gating):
+  - Copied csv-normalizer.ts
+  - Updated health-scan/route.ts with CSV FormData handling
+  - Updated data.ts with addDenials(), codeType/practiceType/cdtCode fields
+  - Updated upload-view.tsx with auto-detected billing systems + normalization info (kept level gating)
+  - Updated prisma/schema.prisma with cdtCode, codeType, practiceType fields
+- Committed and pushed denial-doctor to GitHub (sriraajj-lab/denial-doctor) - commit c359bae
+- Pulled and synced denial-doctor-app (same GitHub repo as denial-doctor)
+- Both repos auto-deploy to Vercel via GitHub integration
+- Verified all 3 sites are live: denialsdoctor.com, denial-doctor.vercel.app, dharma-denial-doctor.vercel.app
+- Tested CSV upload locally - works perfectly with format auto-detection and health scan generation
+
+Stage Summary:
+- GitHub pushes completed: sriraajj-lab/denial-doctor (c359bae), sriraajj-lab/dharma-denial-doctor (7b9ae24)
+- Vercel auto-deploy triggered for both repos
+- All sites live and returning HTTP 200
+- CSV Normalizer Layer deployed to both app versions
+- Note: Vercel CSV upload requires Turso/libSQL for persistent DB (SQLite doesn't work serverless)
