@@ -58,3 +58,26 @@ Stage Summary:
 - Coding Agent now GENERATES corrected codes, not just validates
 - All 3 repos pushed: denial-doctor, denialsdoctorwebpage, dharma-denial-doctor
 - Website now clearly explains 6-agent architecture with pipeline visualization
+---
+Task ID: 6
+Agent: Main Agent
+Task: Update denialsdoctor.com website - change from 15 agents to 6, explain how the tool works
+
+Work Log:
+- Fixed SEO metadata in layout.tsx — changed "15 specialized AI agents" to "6 functional AI agents" in description, openGraph, and twitter meta tags
+- Enhanced AIAgents section on page.tsx with comprehensive "How Denials Doctor Works" explanation:
+  - Added 5-step pipeline walkthrough (Upload → Orchestrator Classifies → Agents Analyze & Fix → Cross-Validate → Fix Report)
+  - Added detailed agent descriptions with "Outputs" field showing what each agent produces
+  - Added "Prescriptive, Not Just Diagnostic" callout highlighting that Coding agent generates corrected codes
+  - Added real-world example walkthrough showing how a coding denial flows through the pipeline
+  - Added dual callout section: Anti-Hallucination Guardrails + Prescriptive AI
+  - Added "Not every claim needs every agent" explanation for pipeline routing
+- Build verified successful
+- Committed and pushed to GitHub — Vercel auto-deploy triggered
+- Verified denial-doctor and dharma-denial-doctor repos are up to date with 6-agent V2 system
+
+Stage Summary:
+- denialsdoctor.com now correctly describes 6 functional agents (not 15)
+- SEO metadata updated across all meta tags
+- Full pipeline explanation added with step-by-step walkthrough and example
+- All 3 repos (denial-doctor, dharma-denial-doctor, denialsdoctorwebpage) are synced
