@@ -106,7 +106,7 @@ export function DenialDetailView() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'run_agent',
-          agentName: 'denial-analyzer',
+          agentName: 'coding-agent',
           taskType: 'analyze',
           denialId: selectedDenialId,
           level: accessLevel,
@@ -140,7 +140,7 @@ export function DenialDetailView() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'run_agent',
-          agentName: 'correction-engine',
+          agentName: 'scrubber-agent',
           taskType: 'correct',
           denialId: selectedDenialId,
           level: accessLevel,
@@ -174,7 +174,7 @@ export function DenialDetailView() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'run_agent',
-          agentName: 'quality-checker',
+          agentName: 'appeal-agent',
           taskType: 'quality_check',
           denialId: selectedDenialId,
           level: accessLevel,

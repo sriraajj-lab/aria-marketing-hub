@@ -255,7 +255,7 @@ export class Conductor {
   }
 
   /**
-   * Get the full system status — all 15 agents, their runs, success rates, etc.
+   * Get the full system status — all 6 agents, their runs, success rates, etc.
    */
   async getSystemStatus(): Promise<{
     agents: Array<{
@@ -281,21 +281,12 @@ export class Conductor {
 
     // Categorize agents by level
     const agentLevelMap: Record<string, { level: AccessLevel; category: string }> = {
-      'triage-router': { level: 1, category: 'Routing' },
-      'denial-analyzer': { level: 2, category: 'Core Pipeline' },
-      'correction-engine': { level: 2, category: 'Core Pipeline' },
-      'quality-checker': { level: 2, category: 'Core Pipeline' },
-      'appeal-strategist': { level: 2, category: 'Core Pipeline' },
-      'evidence-retrieval': { level: 2, category: 'Specialist' },
-      'eligibility-cob': { level: 2, category: 'Specialist' },
-      'prior-authorization': { level: 2, category: 'Specialist' },
-      'medical-necessity': { level: 2, category: 'Specialist' },
-      'timely-filing-watchdog': { level: 2, category: 'Watchdog' },
-      'underpayment-detector': { level: 2, category: 'Watchdog' },
-      'payer-behavior-learner': { level: 2, category: 'Learning' },
-      'root-cause-prevention': { level: 2, category: 'Learning' },
-      'compliance-audit': { level: 2, category: 'Compliance' },
-      'human-in-the-loop': { level: 3, category: 'EHR Integration' },
+      'orchestrator-agent': { level: 1, category: 'Orchestration' },
+      'demographics-agent': { level: 1, category: 'Validation' },
+      'eligibility-agent': { level: 2, category: 'Verification' },
+      'coding-agent': { level: 2, category: 'Code Correction' },
+      'scrubber-agent': { level: 2, category: 'Pre-Submission' },
+      'appeal-agent': { level: 2, category: 'Appeals' },
     };
 
     const { L1_SCAN_WORKFLOW, L2_FIX_WORKFLOW, L3_AUTO_WORKFLOW } = await import('./workflows');
