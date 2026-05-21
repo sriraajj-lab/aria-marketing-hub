@@ -117,6 +117,8 @@ function Nav({ onCtaClick }: { onCtaClick?: () => void }) {
     { label: "AI Agents", href: "#agents" },
     { label: "Attribution", href: "#attribution" },
     { label: "Pricing", href: "#pricing" },
+    { label: "Recovery Service", href: "/recovery-service" },
+    { label: "API", href: "/api-docs" },
   ];
 
   return (
