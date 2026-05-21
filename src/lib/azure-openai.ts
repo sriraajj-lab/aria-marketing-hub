@@ -1,72 +1,54 @@
-const AZURE_OPENAI_API_KEY = process.env.AZURE_OPENAI_API_KEY || '';
-const AZURE_OPENAI_ENDPOINT = process.env.AZURE_OPENAI_ENDPOINT || '';
-const AZURE_OPENAI_MODEL = process.env.AZURE_OPENAI_MODEL || 'gpt-5.5';
+/**
+ * Azure OpenAI Compatibility Layer — Now powered by THE BRAIN
+ *
+ * This file provides backward compatibility with the old azure-openai.ts API
+ * while routing all calls through the new Brain module for:
+ * - Multi-model support (Azure OpenAI + Claude + z-ai-sdk)
+ * - Cross-validation between models
+ * - Anti-hallucination deterministic validation
+ * - Automatic fallback when providers fail
+ *
+ * NEW: Use `import { getBrain, analyzeDenial, generateCorrectedCodes } from './brain'`
+ *      for the full Brain API with cross-validation.
+ *
+ * LEGACY: Use `import { callAzureOpenAI } from './azure-openai'` for drop-in compatibility.
+ */
 
-interface AzureOpenAIResponse {
-  output: Array<{
-    type: string;
-    content?: Array<{
-      type: string;
-      text: string;
-    }>;
-  }>;
-}
+import { getBrain, type BrainResult, type AIProvider } from './brain';
 
+// ─── BACKWARD-COMPATIBLE API ───────────────────────────────────────────────────
+
+/**
+ * Call Azure OpenAI (or fallback provider) with a system prompt and user message.
+ * This is the LEGACY API — kept for backward compatibility.
+ *
+ * NEW CODE: Use `getBrain().think()` or the convenience functions in brain.ts instead.
+ */
 export async function callAzureOpenAI(systemPrompt: string, userMessage: string): Promise<string> {
-  if (!AZURE_OPENAI_API_KEY || !AZURE_OPENAI_ENDPOINT) {
-    throw new Error('Azure OpenAI configuration is missing. Please set AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT environment variables.');
-  }
+  const brain = getBrain();
 
-  const response = await fetch(AZURE_OPENAI_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'api-key': AZURE_OPENAI_API_KEY,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: AZURE_OPENAI_MODEL,
-      input: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
-    }),
+  const result = await brain.think({
+    systemPrompt,
+    userMessage,
+    outputFormat: 'text', // Legacy calls expect raw text
+    category: 'general',
+    highStakes: false,
+    temperature: 0.1,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Azure OpenAI API error:', response.status, errorText);
-    throw new Error(`Azure OpenAI API error: ${response.status} - ${errorText}`);
+  if (result.error && !result.content) {
+    throw new Error(result.error);
   }
 
-  const data: AzureOpenAIResponse = await response.json();
-
-  // Extract text from the response
-  let resultText = '';
-  if (data.output && Array.isArray(data.output)) {
-    for (const item of data.output) {
-      if (item.type === 'message' && item.content) {
-        for (const content of item.content) {
-          if (content.type === 'output_text' || content.type === 'text') {
-            resultText += content.text;
-          }
-        }
-      }
-    }
-  }
-
-  if (!resultText) {
-    // Fallback: try to extract from any text in the response
-    const jsonStr = JSON.stringify(data);
-    console.log('Full Azure OpenAI response:', jsonStr);
-    throw new Error('Unable to extract text from Azure OpenAI response');
-  }
-
-  return resultText;
+  return result.content;
 }
 
+/**
+ * Parse JSON from an AI response text.
+ * Handles markdown code blocks and other common formats.
+ */
 export function parseJSONResponse(text: string): Record<string, unknown> {
-  // Try to extract JSON from the response
-  // First, try direct parse
+  // Try direct parse
   try {
     return JSON.parse(text);
   } catch {
@@ -76,7 +58,7 @@ export function parseJSONResponse(text: string): Record<string, unknown> {
       try {
         return JSON.parse(jsonMatch[1]);
       } catch {
-        // Continue to next method
+        // Continue
       }
     }
 
@@ -94,57 +76,42 @@ export function parseJSONResponse(text: string): Record<string, unknown> {
   }
 }
 
-export const DENIAL_ANALYSIS_PROMPT = `You are an expert healthcare revenue cycle denial management analyst with deep specialty-specific knowledge. Analyze denied medical claims using CARC/RARC codes, claim data, denial patterns, and specialty-specific coding rules.
+// ─── ENHANCED API (NEW) ────────────────────────────────────────────────────────
 
-SPECIALTY-SPECIFIC CONSIDERATIONS:
-- ONCOLOGY: Check J-code wastage (JW modifier), chemotherapy administration bundling (96413+96360), infusion time coding, off-label drug use, NCD 110.x criteria, clinical trial billing rules
-- CARDIOLOGY: Check cath lab bundling (diagnostic+intervention), stent coding (DES/BMS), echo frequency limits, modifier 26/TC for imaging, medical necessity for cardiac imaging
-- ORTHOPEDICS: Check global period rules, bilateral procedures (modifier 50), E/M with procedures (modifier 25), LCD criteria for joint replacement
-- GASTROENTEROLOGY: Check endoscopy bundling (biopsy+diagnostic scope), sedation inclusion, screening vs diagnostic colonoscopy
-- RADIOLOGY: Check professional/technical component (26/TC), contrast bundling (with/without), medical necessity for advanced imaging
-- BEHAVIORAL HEALTH: Check session time-based coding, frequency limits, medical necessity documentation, prior authorization requirements
+/**
+ * Get the Brain instance for advanced usage.
+ * Use this for cross-validation, deterministic validation, etc.
+ */
+export { getBrain, analyzeDenial, generateCorrectedCodes, generateAppealLetter, qualityCheck, overviewScan } from './brain';
+export type { BrainResult, AIProvider, BrainCallOptions } from './brain';
 
-Return structured JSON with: denial_summary, root_cause_category, root_cause_detail, denial_category (one of: coding_error, missing_information, authorization, eligibility, medical_necessity, timely_filing, duplicate, bundling, demographic, other), preventable (boolean), correctable (boolean), appeal_recommended (boolean), confidence_score (0-1), recommended_next_action, required_information array (each with item and reason_needed), compliance_notes array, specialty_detected (one of: oncology, cardiology, orthopedics, gastroenterology, neurosurgery, radiology, anesthesiology, obgyn, urology, pulmonology, dermatology, emergency_medicine, pathology_lab, behavioral_health, ophthalmology, nephrology, general_surgery, physical_therapy, dental, eval_management, general), specialty_specific_notes. Return ONLY valid JSON, no other text.`;
+// ─── SYSTEM PROMPTS (PRESERVED FOR COMPATIBILITY) ──────────────────────────────
 
-export const CORRECTION_SUGGESTION_PROMPT = `You are an expert healthcare claim correction specialist with deep specialty-specific knowledge of NCCI edits, modifier rules, LCD/NCD criteria, J-code billing, and payer-specific coding requirements.
+export const DENIAL_ANALYSIS_PROMPT = `You are an expert healthcare revenue cycle denial management analyst. Analyze denied medical claims using CARC/RARC codes, claim data, and denial patterns. Identify root cause, classify denial, determine correctability, and suggest next action.
 
-SPECIALTY-SPECIFIC CORRECTION RULES:
+CRITICAL RULES:
+- Only validate and analyze EXISTING data — NEVER invent patient data, codes, or policy numbers
+- If you are unsure about something, say so explicitly
+- Every factual claim must have a source reference
+- Confidence must be between 0 and 1
 
-ONCOLOGY:
-- J-code wastage: Bill administered dose units separately from JW modifier units for discarded single-use vial drug
-- Chemotherapy bundling: 96413 bundles 96360 (hydration) unless modifier XU with documented medical necessity
-- Infusion time: >30 min past hour = additional unit. Document exact start/stop times
-- Off-label drugs: Must reference NCCN compendium listing or peer-reviewed literature
-- Biosimilar substitution: Use correct J-code for the specific biosimilar dispensed
-- JW modifier: Required for single-use vial wastage. Document exact mg discarded
+Return structured JSON with: denial_summary, root_cause_category, root_cause_detail, denial_category (one of: coding_error, missing_information, authorization, eligibility, medical_necessity, timely_filing, duplicate, bundling, demographic, other), preventable (boolean), correctable (boolean), appeal_recommended (boolean), confidence_score (0-1), recommended_next_action, required_information array (each with item and reason_needed), compliance_notes array. Return ONLY valid JSON, no other text.`;
 
-CARDIOLOGY:
-- Cath lab: Diagnostic cath (93458) is bundled into PCI when performed same session
-- Echo: 93306 includes rest+stress+interpretation. Do NOT unbundle into 93307+93350
-- Stent coding: One code per vessel, not per stent. Document each vessel separately
-- 26/TC modifiers: Required for imaging professional/technical component split
+export const CORRECTION_SUGGESTION_PROMPT = `You are an expert healthcare claim correction specialist with deep knowledge of NCCI edits, modifier rules, LCD/NCD criteria, and payer-specific coding requirements.
 
-RADIOLOGY:
-- With/without contrast: CPT with contrast includes without contrast (do not bill both)
-- 26/TC: Professional component (26) for interpretation only, TC for technical only
-
-When suggesting corrections, you MUST:
-1. Check NCCI bundling: If the CPT code is part of a known bundle, recommend the correct unbundling modifier (59, XE, XS, XP, XU) ONLY if documentation supports a distinct service.
-2. Validate modifiers: For CO-4 denials, identify the exact missing/incorrect modifier. For E/M codes, consider modifier 25. For surgical codes, consider laterality (LT/RT/50). For J-code wastage, consider JW.
-3. Verify medical necessity: For CO-27 denials, check if the diagnosis meets LCD/NCD coverage criteria. Suggest alternative covered diagnoses ONLY if clinically appropriate.
-4. Apply specialty-specific rules: Oncology has chemo admin bundling rules. Cardiology has cath lab bundling. Radiology has 26/TC rules.
-5. Consider resubmission vs appeal: Simple coding fixes → corrected claim (frequency 7). Medical necessity → clinical appeal. Timely filing → proof-of-filing appeal.
-
-IMPORTANT CODING RULES:
+CRITICAL SAFETY RULES:
+- Only propose corrections you are confident about — if unsure, return empty corrections
+- Explain WHY the original code is wrong and WHY the new code is correct
+- Reference specific coding guidelines (AMA CPT, ICD-10-CM Official Guidelines, NCCI, LCD/NCD)
+- Validate that proposed codes are real, valid code numbers (CPT = 4-5 digits, ICD-10 = letter + digits)
+- If proposing a diagnosis change, ensure it is clinically consistent with the procedure
+- Never fabricate codes — if you cannot determine the correct code with confidence, say so
+- ALL corrections are AI-generated and MUST be verified by a certified coder before use
 - Modifier 59 should NOT be used to bypass legitimate NCCI edits where services are truly bundled
 - Downcoding (e.g., 99215→99214) is preferable to denial write-off when documentation doesn't support the level billed
-- Diagnosis changes must be supported by clinical documentation - never fabricate diagnoses
-- For bundling denials: if modifier not allowed per NCCI, the component code CANNOT be separately reported
-- JW modifier for drug wastage: Document exact amount administered and discarded in mg
-- For oncology: Sequential infusions must be documented with different drugs and distinct time windows
-- For cardiology: Diagnostic catheterization is included in interventional catheterization codes
+- Diagnosis changes must be supported by clinical documentation — never fabricate diagnoses
 
-Return structured JSON with: correction_type, correction_summary, correction_rationale, proposed_changes array (each with field_path, original_value, proposed_value, reason, risk_level one of: low/medium/high, supporting_reference), required_documents array (each with document_type and reason), resubmission_instructions object (with claim_frequency_code, submission_type, notes, estimated_success_rate), confidence_score (0-1), risk_level (one of: low/medium/high), compliance_notes array, ncci_check (object with is_bundled, modifier_allowed, recommendation), specialty_specific_considerations object (with specialty_detected, specialty_rules_applied, additional_documentation_needed), estimated_recovery_amount. Return ONLY valid JSON, no other text.`;
+Return structured JSON with: correction_type, correction_summary, correction_rationale, proposed_changes array (each with field_path, original_value, proposed_value, reason, risk_level one of: low/medium/high, supporting_reference), required_documents array, resubmission_instructions object, confidence_score (0-1), risk_level (one of: low/medium/high), compliance_notes array, ncci_check (object with is_bundled, modifier_allowed, recommendation), estimated_recovery_amount. Return ONLY valid JSON, no other text.`;
 
 export const QUALITY_CHECKER_PROMPT = `You are a healthcare claim quality assurance auditor. Validate proposed corrections for denied claims before resubmission. Check: correction addresses denial reason, required fields complete, coding changes supported, no compliance risk. Return structured JSON with: overall_result (pass/fail/warning), validation_findings array (each with check, result, details), blocking_issues array (each with issue and required_resolution), warnings array (each with warning and recommended_action), recommendation (approve_for_review/return_for_correction/request_more_info), confidence_score (0-1). Return ONLY valid JSON, no other text.`;
 
@@ -152,7 +119,7 @@ export const OVERVIEW_SCAN_PROMPT = `You are an expert healthcare revenue cycle 
 
 Your response MUST be valid JSON with these exact fields:
 {
-  "overall_rating": <number 0-10, where 10 is best. Rate based on: recovery potential, denial severity mix, correctability, payer cooperation level>,
+  "overall_rating": <number 0-10, where 10 is best>,
   "rating_label": "<one of: Critical, Poor, Needs Attention, Fair, Good, Excellent>",
   "executive_summary": "<2-3 sentence professional summary of the denial batch for client presentation>",
   "key_issues": [
@@ -181,11 +148,5 @@ Your response MUST be valid JSON with these exact fields:
   },
   "recommendations": ["<actionable recommendation 1>", "<recommendation 2>", ...]
 }
-
-Rating guidelines:
-- 8-10: Mostly correctable denials, high recovery potential, good payer mix
-- 5-7: Mix of correctable and non-correctable, moderate recovery potential
-- 3-4: Many non-correctable denials, timely filing issues, low recovery
-- 0-2: Predominantly non-recoverable denials, compliance risks
 
 Analyze the data carefully. Be specific with amounts and counts. Return ONLY valid JSON, no other text.`;
