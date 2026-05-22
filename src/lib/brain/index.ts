@@ -9,7 +9,7 @@
  * │  ↓ If rules insufficient...                              │
  * │  Layer 2: SINGLE-MODEL AI (GPT or Claude, flagged)       │
  * │  ↓ For high-stakes decisions...                          │
- * │  Layer 3: DUAL-MODEL CROSS-VALIDATION (GPT + Claude)     │
+ * │  Layer 3: TRIPLE CROSS-VALIDATION (GPT + Claude + Codex) │
  * │  ↓ Always...                                             │
  * │  Layer 4: DETERMINISTIC VALIDATION (format, NCCI, codes) │
  * │  ↓ For ALL AI outputs...                                 │
@@ -17,11 +17,13 @@
  * └──────────────────────────────────────────────────────────┘
  *
  * Cross-Validation Strategy:
- * - Run GPT and Claude independently on the same prompt
- * - If BOTH agree → confidence boost (+0.15), mark as cross-validated
- * - If they DISAGREE → flag for human review, show both opinions
- * - If one FAILS → use the other with reduced confidence (-0.1)
- * - If both FAIL → fall back to rule-based logic
+ * - Run GPT, Claude, and Codex independently on the same prompt
+ * - If ALL THREE agree → confidence boost (+0.20), mark as triple-validated
+ * - If TWO agree → confidence boost (+0.10), use majority position
+ * - If ALL DISAGREE → flag for human review, show all opinions
+ * - If one FAILS → use remaining two with reduced confidence (-0.05)
+ * - If two FAIL → use remaining one with reduced confidence (-0.15)
+ * - If all FAIL → fall back to rule-based logic
  *
  * Anti-Hallucination Guards:
  * - CPT code format validation (4-5 digits)
@@ -34,10 +36,11 @@
  * - ALL AI-generated corrections marked source: 'ai_generated' + riskLevel: 'high'
  *
  * Provider Priority:
- * 1. Azure OpenAI (GPT-5.5) — if AZURE_OPENAI_API_KEY configured
- * 2. Azure Anthropic (Claude) — if AZURE_ANTHROPIC_ENDPOINT configured
- * 3. Direct Anthropic Claude — if ANTHROPIC_API_KEY configured
- * 4. z-ai-web-dev-sdk — only available in development environment
+ * 1. Azure Codex (GPT-5.3-Codex) — if AZURE_FOUNDRY_API_KEY configured
+ * 2. Azure OpenAI (GPT-5.5) — if AZURE_OPENAI_API_KEY configured
+ * 3. Azure Anthropic (Claude) — if AZURE_ANTHROPIC_ENDPOINT configured
+ * 4. Direct Anthropic Claude — if ANTHROPIC_API_KEY configured
+ * 5. z-ai-web-dev-sdk — only available in development environment
  *
  * CRITICAL: This module MUST be used server-side only (API routes / backend).
  * Never expose API keys or call AI from client-side code.
@@ -85,7 +88,7 @@ const DEFAULT_CONFIG: BrainConfig = {
 
 // ─── TYPES ─────────────────────────────────────────────────────────────────────
 
-export type AIProvider = 'azure-openai' | 'anthropic' | 'z-ai-sdk' | 'rule-based';
+export type AIProvider = 'azure-codex' | 'azure-openai' | 'anthropic' | 'z-ai-sdk' | 'rule-based';
 
 export interface BrainCallOptions {
   /** System prompt for the AI */
@@ -164,6 +167,7 @@ export interface BrainResult {
 // ─── COST TRACKING ─────────────────────────────────────────────────────────────
 
 const COST_PER_1K_TOKENS: Record<AIProvider, { input: number; output: number }> = {
+  'azure-codex': { input: 0.015, output: 0.06 },           // GPT-5.3-Codex pricing
   'azure-openai': { input: 0.01, output: 0.03 },           // GPT-5.5 pricing
   'anthropic': { input: 0.003, output: 0.015 },          // Claude 3.5 Sonnet
   'z-ai-sdk': { input: 0, output: 0 },                    // Internal SDK
@@ -199,6 +203,7 @@ function recordCost(provider: AIProvider, category: string, promptTokens: number
 
 export class Brain {
   private config: BrainConfig;
+  private codexAvailable: boolean = false;
   private azureAvailable: boolean = false;
   private anthropicAvailable: boolean = false;
   private azureAnthropicAvailable: boolean = false;
@@ -206,6 +211,11 @@ export class Brain {
 
   constructor(config?: Partial<BrainConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config };
+
+    // Check Azure Codex (GPT-5.3-Codex) — Azure AI Foundry
+    const codexKey = process.env.AZURE_FOUNDRY_API_KEY;
+    const codexEndpoint = process.env.AZURE_FOUNDRY_BASE || 'https://sreeraajj-7693-resource.services.ai.azure.com/api/projects/sreeraajj-7693/openai/v1';
+    this.codexAvailable = !!codexKey;
 
     // Check provider availability
     const azureKey = process.env.AZURE_OPENAI_API_KEY || this.config.azure?.apiKey;
@@ -620,6 +630,8 @@ export class Brain {
     options: { maxTokens: number; temperature: number; outputFormat: string },
   ): Promise<string> {
     switch (provider) {
+      case 'azure-codex':
+        return this.callCodex(systemPrompt, userMessage, options);
       case 'azure-openai':
         return this.callAzureOpenAI(systemPrompt, userMessage, options);
       case 'anthropic':
@@ -629,6 +641,80 @@ export class Brain {
       default:
         throw new Error(`Unknown provider: ${provider}`);
     }
+  }
+
+  /**
+   * Azure Codex (GPT-5.3-Codex) — via Azure AI Foundry Responses API
+   * This is the highest-priority provider for healthcare denial analysis.
+   * Uses the project-scoped endpoint at Azure AI Foundry.
+   */
+  private async callCodex(
+    systemPrompt: string,
+    userMessage: string,
+    options: { maxTokens: number; temperature: number; outputFormat: string },
+  ): Promise<string> {
+    const apiKey = process.env.AZURE_FOUNDRY_API_KEY;
+    const endpoint = process.env.AZURE_FOUNDRY_BASE || 'https://sreeraajj-7693-resource.services.ai.azure.com/api/projects/sreeraajj-7693/openai/v1';
+    const model = 'gpt-5.3-codex';
+
+    if (!apiKey) {
+      throw new Error('Azure Codex not configured. Set AZURE_FOUNDRY_API_KEY.');
+    }
+
+    const url = `${endpoint}/responses`;
+
+    const body: Record<string, unknown> = {
+      model,
+      input: userMessage,
+      temperature: options.temperature ?? 0.2,
+      max_output_tokens: options.maxTokens,
+    };
+
+    // Only include instructions if provided (API rejects null)
+    if (systemPrompt) {
+      body.instructions = systemPrompt;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'api-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(this.config.timeout),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: { message: response.statusText } }));
+      throw new Error(`Codex API error (${response.status}): ${error.error?.message || JSON.stringify(error)}`);
+    }
+
+    const data = await response.json() as {
+      output?: Array<{
+        content?: Array<{ type: string; text?: string }>;
+      }>;
+      usage?: { input_tokens: number; output_tokens: number; total_tokens: number };
+    };
+
+    // Extract text from Responses API output
+    if (data.output) {
+      for (const item of data.output) {
+        if (item.content) {
+          for (const part of item.content) {
+            if (part.type === 'output_text' && part.text) {
+              // Track costs if enabled
+              if (this.config.trackCosts && data.usage) {
+                recordCost('azure-codex', 'denial_analysis', data.usage.input_tokens, data.usage.output_tokens);
+              }
+              return part.text;
+            }
+          }
+        }
+      }
+    }
+
+    throw new Error('Codex returned no output text');
   }
 
   /**
@@ -1136,6 +1222,20 @@ export class Brain {
 
   // ─── HELPER METHODS ──────────────────────────────────────────────────────
 
+  /**
+   * Public: Get list of available AI providers
+   * Useful for API health checks and dashboard display
+   */
+  getAvailableProviders(): AIProvider[] {
+    const providers: AIProvider[] = [];
+    if (this.codexAvailable) providers.push('azure-codex');
+    if (this.azureAvailable) providers.push('azure-openai');
+    if (this.anthropicAvailable) providers.push('anthropic');
+    if (this.zaiSdkAvailable) providers.push('z-ai-sdk');
+    providers.push('rule-based');
+    return providers;
+  }
+
   private shouldCrossValidate(category: string, highStakes: boolean): boolean {
     if (this.config.crossValidationMode === 'always') return true;
     if (this.config.crossValidationMode === 'never') return false;
@@ -1148,6 +1248,7 @@ export class Brain {
 
   private getAvailableProviders(): AIProvider[] {
     const providers: AIProvider[] = [];
+    if (this.codexAvailable) providers.push('azure-codex');
     if (this.azureAvailable) providers.push('azure-openai');
     if (this.anthropicAvailable) providers.push('anthropic');
     // z-ai-sdk is only available in development environment (not on Vercel)
@@ -1157,9 +1258,9 @@ export class Brain {
   }
 
   private getPrimaryProvider(): AIProvider {
-    // Priority: Azure OpenAI is primary (most reliable with deployment),
-    // then Anthropic, then z-ai-sdk (dev only)
-    // No longer require AZURE_OPENAI_DEPLOYMENT_READY — just check if key + endpoint exist
+    // Priority: Azure Codex (most capable for healthcare denial analysis),
+    // then Azure OpenAI, then Anthropic, then z-ai-sdk (dev only)
+    if (this.codexAvailable) return 'azure-codex';
     if (this.azureAvailable) return 'azure-openai';
     if (this.anthropicAvailable) return 'anthropic';
     if (this.zaiSdkAvailable) return 'z-ai-sdk';
