@@ -1,0 +1,15 @@
+Subject: Quick question about denials at {{company_name}}
+
+Hi {{first_name}},
+
+I noticed this about {{company_name}}: {{pain_point}}
+
+I've spent 20+ years running revenue cycle operations, and that pattern usually means denied claims are piling up faster than the team can work them. Most practices I've audited are quietly writing off 5-10% of revenue this way — not because appeals fail, but because they never get filed before the deadline.
+
+I built Denials Doctor to fix exactly that: it reads your denial reports, ranks what's actually recoverable, and drafts the appeals. Practices using it typically see collections improve 30%+ on denied claims.
+
+Worth 15 minutes to see it against your own denial data? Grab a slot here: {{calendar_link}}
+
+If billing isn't your desk, who at {{company_name}} owns revenue cycle? Happy to reach out to them directly.
+
+{{signature}}

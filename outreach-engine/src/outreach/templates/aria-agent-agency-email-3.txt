@@ -1,0 +1,18 @@
+Subject: What one office automated in 30 days
+
+Hi {{first_name}},
+
+One concrete example, then I'll stop nudging.
+
+A small practice office was losing ~20 calls a week to voicemail — reschedules, refill questions, "are you in my network?" Every missed call was either lost revenue or a callback eating staff time.
+
+Thirty days after we deployed their agent:
+- Every call answered, 24/7; urgent ones routed to a human immediately
+- Reschedules handled end-to-end, calendar updated automatically
+- Staff callbacks dropped by roughly two hours a day
+
+The office manager's summary: "It's like we hired someone who never sleeps and never quits."
+
+If {{company_name}} has a version of this — calls, follow-ups, data entry — 15 minutes will tell you what's automatable: {{calendar_link}}
+
+{{signature}}

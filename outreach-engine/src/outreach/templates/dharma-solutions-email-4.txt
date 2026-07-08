@@ -1,0 +1,11 @@
+Subject: Closing the loop — {{company_name}}
+
+Hi {{first_name}},
+
+I'll stop here — no reply usually means the timing isn't right, and billing changes are rarely urgent until suddenly they are.
+
+One standing offer, no meeting required: reply with your rough monthly collections and headcount in billing, and I'll send back what the function should cost and where practices your size usually leak money. Honest numbers, two paragraphs, no pitch.
+
+If a biller quits or AR creeps past 45 days, that's usually the moment — the door's open: {{calendar_link}}
+
+{{signature}}

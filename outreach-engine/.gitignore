@@ -1,0 +1,7 @@
+data/
+reports/
+loop/memory/*
+!loop/memory/.gitkeep
+__pycache__/
+*.pyc
+.env

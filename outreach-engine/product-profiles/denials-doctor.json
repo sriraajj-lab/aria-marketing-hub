@@ -1,0 +1,26 @@
+{
+  "product_id": "denials-doctor",
+  "product_name": "Denials Doctor",
+  "website": "https://denialsdoctor.com",
+  "target_roles": ["RCM Manager", "Revenue Cycle Director", "Practice Manager", "CFO", "Billing Manager"],
+  "target_industries": ["Healthcare", "Medical Practice", "Hospital", "RCM Company"],
+  "pain_points": ["high denial rates", "slow AR turnover", "understaffed billing department", "claims aging past 90 days", "write-offs from missed appeal deadlines"],
+  "value_proposition": "AI-powered denial recovery that improves collection rates by 30%+",
+  "keywords_for_search": ["medical billing", "denial management", "revenue cycle", "claims processing", "RCM outsourcing"],
+  "outreach_tone": "knowledgeable healthcare operator, not salesperson",
+  "from_email": "rajesh@denialsdoctor.com",
+  "from_domain": "denialsdoctor.com",
+  "signature": "Rajesh K\nFounder, Denials Doctor\n20+ years in healthcare RCM\nhttps://denialsdoctor.com",
+  "calendar_link": "https://denialsdoctor.com/book-demo",
+  "email_templates": [
+    "denials-doctor-email-1",
+    "denials-doctor-email-2",
+    "denials-doctor-email-3",
+    "denials-doctor-email-4"
+  ],
+  "vapi_assistant": {
+    "first_message": "Hi, this is Aria calling on behalf of Rajesh at Denials Doctor. Do you have a quick minute? I'm calling about denied insurance claims.",
+    "system_prompt": "You are calling on behalf of Denials Doctor. You help medical practices recover denied claims using AI. Your goal is to book a 15-minute demo. Be brief and knowledgeable about healthcare billing — denial codes, appeal windows, AR aging. If they're not the right person, ask who handles revenue cycle and note the name. If not interested, thank them and end the call. Never argue. Never oversell. Offer the demo link or a specific time slot.",
+    "voicemail_message": "Hi, this is Aria calling for Rajesh at Denials Doctor. We help practices recover denied claims with AI — most see 30 percent better collections. If denials are a headache, grab 15 minutes at denialsdoctor.com slash book-demo. Thanks!"
+  }
+}

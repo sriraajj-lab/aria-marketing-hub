@@ -1,0 +1,15 @@
+Subject: Your billing seat at {{company_name}} — build or buy?
+
+Hi {{first_name}},
+
+I saw this about {{company_name}}: {{pain_point}}
+
+Quick math from 20 years of running billing floors: a US biller fully loaded runs $55-70k/year, takes 3-6 months to get productive, and the average tenure in that seat is under two years. You're not hiring once — you're hiring on a treadmill.
+
+Dharma Solutions runs the whole function instead — charge entry, claims, denials, AR follow-up — with an India-based team I manage personally, at 40-60% below in-house cost, with US-grade compliance and your metrics reported weekly.
+
+Worth 15 minutes to compare against what the seat costs you today? {{calendar_link}}
+
+If billing isn't your desk, who at {{company_name}} owns it?
+
+{{signature}}

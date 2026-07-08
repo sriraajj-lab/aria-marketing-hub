@@ -1,0 +1,8 @@
+# outreach-engine cron schedule (Week 2+; Week 1 runs everything by hand)
+# m h dom mon dow command
+7  6 * * *    cd /opt/outreach-engine && bash scheduled-tasks/daily-lead-scrape.sh >> loop/memory/cron.log 2>&1
+7  7 * * *    cd /opt/outreach-engine && bash scheduled-tasks/daily-enrichment.sh >> loop/memory/cron.log 2>&1
+17 7 * * 1-5  cd /opt/outreach-engine && ./loop/loop.sh >> loop/memory/cron.log 2>&1
+47 7 * * *    cd /opt/outreach-engine && ./loop/verify-goals.sh >> loop/memory/cron.log 2>&1
+37 8 * * 1    cd /opt/outreach-engine && bash scheduled-tasks/weekly-report.sh >> loop/memory/cron.log 2>&1
+57 8 * * 1    cd /opt/outreach-engine && claude -p "$(cat loop/compost.md)" --model claude-fable-5 --effort high >> loop/memory/compost-log.md 2>&1

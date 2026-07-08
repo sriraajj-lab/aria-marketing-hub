@@ -1,0 +1,17 @@
+Subject: What outsourcing actually looks like (not the horror stories)
+
+Hi {{first_name}},
+
+Everyone has heard an offshore-billing horror story. Most of them come down to one thing: the practice handed billing to a vendor and stopped looking.
+
+Here's how we run it differently at Dharma:
+- You keep your PM system and your logins — we work inside your tools, nothing migrates
+- Weekly scorecard: charges entered, clean-claim rate, denial rate, AR days, collections
+- A named team lead you can call, not a ticket queue
+- 30-day out clause — if the numbers don't improve, firing us is easy
+
+A practice like {{company_name}} typically transitions in 2-3 weeks with zero disruption to cash flow, because we run parallel before we take over.
+
+15 minutes to see the scorecard and pricing: {{calendar_link}}
+
+{{signature}}

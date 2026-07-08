@@ -1,0 +1,17 @@
+Subject: The 3 tasks I always automate first
+
+Hi {{first_name}},
+
+Following up on my note to {{company_name}}.
+
+When I audit a business's operations, three tasks are almost always the best automation candidates — highest volume, lowest judgment:
+
+1. Phone triage — answering, routing, taking structured messages after hours
+2. Follow-up chasing — appointment reminders, unpaid invoice nudges, "did you get my email?"
+3. Data entry between systems — copying the same record into two tools that don't talk
+
+An agent handling just these usually pays for itself in the first month, mostly in missed-call revenue alone.
+
+I'd be glad to look at your workflows and tell you honestly which are automatable and which aren't — 15 minutes: {{calendar_link}}
+
+{{signature}}

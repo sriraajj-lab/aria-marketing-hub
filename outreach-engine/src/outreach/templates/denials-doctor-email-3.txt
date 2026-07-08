@@ -1,0 +1,18 @@
+Subject: What a {{specialty}} practice recovered in 60 days
+
+Hi {{first_name}},
+
+One more data point and then I'll get out of your inbox.
+
+A practice about the size of {{company_name}} came to us with 14% of claims denying and an AR-over-90 bucket that kept growing. Their billers were good — there just weren't enough hours to work appeals AND keep up with new claims.
+
+Sixty days after turning on Denials Doctor:
+- Appeals filed within 7 days of denial (was: 35+ days, often never)
+- 62% overturn rate on the denials it flagged as recoverable
+- The billing team's backlog cleared without hiring anyone
+
+That last point matters — this isn't about replacing your team, it's about giving them leverage on the work that pays.
+
+If denials are even a top-5 problem for you this quarter, 15 minutes: {{calendar_link}}
+
+{{signature}}

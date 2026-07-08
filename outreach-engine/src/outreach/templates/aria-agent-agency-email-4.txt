@@ -1,0 +1,11 @@
+Subject: Closing the loop — {{company_name}}
+
+Hi {{first_name}},
+
+No reply usually means "not now," and that's fine — automation projects live or die on timing.
+
+One parting offer, no meeting needed: reply with the one task your team complains about most, and I'll send back a straight answer on whether an agent can do it, what it would cost, and what I'd skip. Two paragraphs, no pitch deck.
+
+And if the hiring route wins this round, no hard feelings — the agents will still be here when the next vacancy opens: {{calendar_link}}
+
+{{signature}}

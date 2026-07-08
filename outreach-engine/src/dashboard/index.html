@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outreach Engine</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --panel: #171a23; --border: #262b38;
+    --text: #e6e8ee; --muted: #8b93a7; --accent: #4f8cff;
+    --good: #34c07c; --warn: #e8a13c; --hot: #e35d5d;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text);
+         font: 14px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; padding: 20px; }
+  header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  h1 { font-size: 20px; font-weight: 600; }
+  h2 { font-size: 14px; font-weight: 600; color: var(--muted);
+       text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+  select, button { background: var(--panel); color: var(--text); border: 1px solid var(--border);
+           border-radius: 8px; padding: 7px 12px; font-size: 14px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+           gap: 12px; margin-bottom: 20px; }
+  .tile { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .tile .num { font-size: 28px; font-weight: 700; }
+  .tile .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+          gap: 16px; margin-bottom: 20px; }
+  .panel { background: var(--panel); border: 1px solid var(--border);
+           border-radius: 12px; padding: 16px; }
+  .panel .chartbox { position: relative; height: 240px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 8px;
+       border-bottom: 1px solid var(--border); }
+  td { padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .score { display: inline-block; min-width: 26px; text-align: center; border-radius: 6px;
+           padding: 1px 6px; font-weight: 700; }
+  .score.hot { background: rgba(227,93,93,.18); color: var(--hot); }
+  .score.warm { background: rgba(232,161,60,.18); color: var(--warn); }
+  .score.cold { background: rgba(139,147,167,.18); color: var(--muted); }
+  .pain { color: var(--muted); font-size: 12px; max-width: 340px; }
+  .approve { background: rgba(52,192,124,.15); color: var(--good); border-color: transparent; }
+  .cancel { background: rgba(227,93,93,.12); color: var(--hot); border-color: transparent; margin-left: 6px; }
+  .empty { color: var(--muted); padding: 16px 0; text-align: center; }
+  .wide { grid-column: 1 / -1; overflow-x: auto; }
+  #updated { color: var(--muted); font-size: 12px; margin-left: auto; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Outreach Engine</h1>
+  <select id="product"><option value="">All products</option></select>
+  <button id="refresh">Refresh</button>
+  <span id="updated"></span>
+</header>
+
+<div class="tiles">
+  <div class="tile"><div class="num" id="t-leads">–</div><div class="lbl">Leads</div></div>
+  <div class="tile"><div class="num" id="t-sent">–</div><div class="lbl">Outreach sent</div></div>
+  <div class="tile"><div class="num" id="t-replies">–</div><div class="lbl">Replies</div></div>
+  <div class="tile"><div class="num" id="t-meetings">–</div><div class="lbl">Meetings booked</div></div>
+  <div class="tile"><div class="num" id="t-reply-rate">–</div><div class="lbl">Reply rate</div></div>
+</div>
+
+<div class="grid">
+  <div class="panel"><h2>Leads by source (7 days)</h2>
+    <div class="chartbox"><canvas id="c-source"></canvas></div></div>
+  <div class="panel"><h2>Sent vs replied (14 days)</h2>
+    <div class="chartbox"><canvas id="c-sentreplied"></canvas></div></div>
+  <div class="panel"><h2>Meetings per source (conversion)</h2>
+    <div class="chartbox"><canvas id="c-conversion"></canvas></div></div>
+  <div class="panel"><h2>Pipeline funnel</h2>
+    <div class="chartbox"><canvas id="c-funnel"></canvas></div></div>
+
+  <div class="panel wide"><h2>Hot leads needing review (score ≥ 8)</h2>
+    <table id="hot"><thead><tr>
+      <th>Score</th><th>Company</th><th>Contact</th><th>Email / phone</th>
+      <th>Source</th><th>Pain signal</th><th>Location</th>
+    </tr></thead><tbody></tbody></table>
+    <div class="empty" id="hot-empty" hidden>No hot leads waiting.</div></div>
+
+  <div class="panel wide"><h2>Outreach pending approval</h2>
+    <table id="pending"><thead><tr>
+      <th>Channel</th><th>Step</th><th>Company</th><th>To</th>
+      <th>Subject</th><th>Score</th><th></th>
+    </tr></thead><tbody></tbody></table>
+    <div class="empty" id="pending-empty" hidden>Nothing waiting for approval.</div></div>
+</div>
+
+<script>
+'use strict';
+/** @type {Record<string, Chart>} */
+const charts = {};
+const PALETTE = ['#4f8cff', '#34c07c', '#e8a13c', '#e35d5d', '#a06cf5', '#4fc3d9', '#8b93a7'];
+const GRID = { color: 'rgba(139,147,167,.15)' };
+const TICKS = { color: '#8b93a7' };
+Chart.defaults.color = '#8b93a7';
+Chart.defaults.borderColor = 'rgba(139,147,167,.15)';
+
+/** Escape text for safe HTML injection. @param {string} s @returns {string} */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/** Create or replace a chart. @param {string} id @param {object} cfg */
+function draw(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), cfg);
+}
+
+/** Fetch dashboard stats for the selected product and render everything. */
+async function load() {
+  const product = document.getElementById('product').value;
+  const url = '/api/stats' + (product ? `?product_id=${encodeURIComponent(product)}` : '');
+  let stats;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    stats = await res.json();
+  } catch (err) {
+    document.getElementById('updated').textContent = `Load failed: ${err.message}`;
+    return;
+  }
+
+  const t = stats.totals || {};
+  document.getElementById('t-leads').textContent = t.leads ?? 0;
+  document.getElementById('t-sent').textContent = t.sent ?? 0;
+  document.getElementById('t-replies').textContent = t.replies ?? 0;
+  document.getElementById('t-meetings').textContent = t.meetings ?? 0;
+  document.getElementById('t-reply-rate').textContent =
+    t.sent ? Math.round(100 * (t.replies || 0) / t.sent) + '%' : '–';
+
+  // Leads by source (bar)
+  const src = stats.leads_by_source_7d || [];
+  draw('c-source', {
+    type: 'bar',
+    data: { labels: src.map(r => r.source),
+      datasets: [{ data: src.map(r => r.n), backgroundColor: PALETTE }] },
+    options: { plugins: { legend: { display: false } },
+      scales: { x: { grid: GRID, ticks: TICKS }, y: { grid: GRID, ticks: TICKS, beginAtZero: true } },
+      maintainAspectRatio: false }
+  });
+
+  // Sent vs replied (line, merged day axis)
+  const days = [...new Set([...(stats.outreach_daily||[]).map(r => r.day),
+                            ...(stats.replies_daily||[]).map(r => r.day)])].sort();
+  const sentBy = Object.fromEntries((stats.outreach_daily||[]).map(r => [r.day, r.sent]));
+  const repBy = Object.fromEntries((stats.replies_daily||[]).map(r => [r.day, r.replied]));
+  draw('c-sentreplied', {
+    type: 'line',
+    data: { labels: days, datasets: [
+      { label: 'Sent', data: days.map(d => sentBy[d] || 0),
+        borderColor: PALETTE[0], backgroundColor: PALETTE[0], tension: .3 },
+      { label: 'Replied', data: days.map(d => repBy[d] || 0),
+        borderColor: PALETTE[1], backgroundColor: PALETTE[1], tension: .3 }] },
+    options: { scales: { x: { grid: GRID, ticks: TICKS }, y: { grid: GRID, ticks: TICKS, beginAtZero: true } },
+      maintainAspectRatio: false }
+  });
+
+  // Conversion per source (grouped bar)
+  const conv = stats.conversion_by_source || [];
+  draw('c-conversion', {
+    type: 'bar',
+    data: { labels: conv.map(r => r.source), datasets: [
+      { label: 'Leads', data: conv.map(r => r.leads), backgroundColor: PALETTE[6] },
+      { label: 'Meetings', data: conv.map(r => r.meetings), backgroundColor: PALETTE[1] }] },
+    options: { scales: { x: { grid: GRID, ticks: TICKS }, y: { grid: GRID, ticks: TICKS, beginAtZero: true } },
+      maintainAspectRatio: false }
+  });
+
+  // Funnel (horizontal bar in stage order)
+  const ORDER = ['new','enriched','scored','outreach_sent','replied','meeting_booked','won','lost','unsubscribed'];
+  const funnel = (stats.funnel || []).slice()
+    .sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status));
+  draw('c-funnel', {
+    type: 'bar',
+    data: { labels: funnel.map(r => r.status),
+      datasets: [{ data: funnel.map(r => r.n), backgroundColor: PALETTE[0] }] },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } },
+      scales: { x: { grid: GRID, ticks: TICKS, beginAtZero: true }, y: { grid: GRID, ticks: TICKS } },
+      maintainAspectRatio: false }
+  });
+
+  // Hot leads table
+  const hot = stats.hot_leads || [];
+  document.getElementById('hot').querySelector('tbody').innerHTML = hot.map(l => `
+    <tr>
+      <td><span class="score hot">${l.score}</span></td>
+      <td>${esc(l.company_name)}</td>
+      <td>${esc(l.contact_name)}${l.title ? `<div class="pain">${esc(l.title)}</div>` : ''}</td>
+      <td>${esc(l.email)}${l.phone ? `<div class="pain">${esc(l.phone)}</div>` : ''}</td>
+      <td>${esc(l.source)}</td>
+      <td class="pain">${esc(l.pain_signal)}</td>
+      <td>${esc([l.city, l.state].filter(Boolean).join(', '))}</td>
+    </tr>`).join('');
+  document.getElementById('hot-empty').hidden = hot.length > 0;
+
+  // Pending approval table
+  const pending = stats.pending_approval || [];
+  document.getElementById('pending').querySelector('tbody').innerHTML = pending.map(o => `
+    <tr>
+      <td>${esc(o.channel)}</td>
+      <td>${o.sequence_step}</td>
+      <td>${esc(o.company_name)}</td>
+      <td>${esc(o.email || o.contact_name)}</td>
+      <td class="pain">${esc(o.subject)}</td>
+      <td><span class="score ${o.score >= 8 ? 'hot' : o.score >= 5 ? 'warm' : 'cold'}">${o.score}</span></td>
+      <td>
+        <button class="approve" data-act="approve" data-id="${o.id}">Approve</button>
+        <button class="cancel" data-act="cancel" data-id="${o.id}">Cancel</button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('pending-empty').hidden = pending.length > 0;
+
+  document.getElementById('updated').textContent =
+    'Updated ' + new Date().toLocaleTimeString();
+}
+
+/** Approve or cancel one queued outreach row. @param {string} act @param {string} id */
+async function act(actName, id) {
+  try {
+    const res = await fetch(`/api/outreach/${id}/${actName}`, { method: 'POST' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  } catch (err) {
+    alert(`${actName} failed: ${err.message}`);
+  }
+  load();
+}
+
+document.getElementById('pending').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-act]');
+  if (btn) act(btn.dataset.act, btn.dataset.id);
+});
+document.getElementById('refresh').addEventListener('click', load);
+document.getElementById('product').addEventListener('change', load);
+
+/** Populate the product filter, then do the first load. */
+(async function init() {
+  try {
+    const res = await fetch('/api/products');
+    const products = await res.json();
+    const sel = document.getElementById('product');
+    for (const p of products) {
+      const opt = document.createElement('option');
+      opt.value = p.product_id;
+      opt.textContent = p.product_name + (p.active ? ' (active)' : '');
+      sel.appendChild(opt);
+    }
+  } catch { /* filter stays product-less; dashboard still works */ }
+  load();
+  setInterval(load, 60_000);
+})();
+</script>
+</body>
+</html>

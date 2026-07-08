@@ -1,0 +1,15 @@
+Subject: The number that tells you if billing is broken
+
+Hi {{first_name}},
+
+Following up on my note about billing at {{company_name}}.
+
+One number tells me more than any tour of a billing office: days in AR. Under 35, your process works. 35-45, money is leaking. Over 45, you're financing your payers for free.
+
+The usual causes aren't mysterious — claims sitting unworked while staff handle front-desk fires, denials nobody has time to appeal, and follow-up that only happens when a balance gets embarrassing.
+
+That's the exact work my team does all day. We take over the queue, and your AR days become my problem, tracked on a weekly scorecard you can read in one minute.
+
+If you know your AR days (or want help finding them), that's a 15-minute conversation: {{calendar_link}}
+
+{{signature}}

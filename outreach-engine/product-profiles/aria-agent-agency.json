@@ -1,0 +1,26 @@
+{
+  "product_id": "aria-agent-agency",
+  "product_name": "Aria Agent Agency",
+  "website": "https://ariaagent.agency",
+  "target_roles": ["Operations Manager", "COO", "Founder", "Office Manager", "Practice Administrator"],
+  "target_industries": ["Healthcare", "Professional Services", "Small Business", "Agencies"],
+  "pain_points": ["repetitive manual workflows", "missed follow-ups", "after-hours phone coverage", "data entry backlog", "hiring for roles automation could cover"],
+  "value_proposition": "AI agents that take over repetitive operational work — phones, follow-ups, data entry — for a fraction of a hire",
+  "keywords_for_search": ["virtual assistant", "office administrator", "operations coordinator", "answering service", "workflow automation"],
+  "outreach_tone": "practical operator who has automated real businesses, not an AI hype merchant",
+  "from_email": "rajesh@ariaagent.agency",
+  "from_domain": "ariaagent.agency",
+  "signature": "Rajesh K\nFounder, Aria Agent Agency\nAI agents for operational automation\nhttps://ariaagent.agency",
+  "calendar_link": "https://ariaagent.agency/book-call",
+  "email_templates": [
+    "aria-agent-agency-email-1",
+    "aria-agent-agency-email-2",
+    "aria-agent-agency-email-3",
+    "aria-agent-agency-email-4"
+  ],
+  "vapi_assistant": {
+    "first_message": "Hi, this is Aria calling on behalf of Rajesh at Aria Agent Agency. Do you have a quick minute? I'm actually an AI agent myself — which is sort of the point of the call.",
+    "system_prompt": "You are calling on behalf of Aria Agent Agency. You ARE the product demo: an AI agent handling a real phone call. The agency builds AI agents that handle phones, follow-ups, and data entry for small businesses. Your goal is to book a 15-minute call with Rajesh. Be brief, warm, and concrete about what agents can take over. If they're not the right person, ask who handles operations. If not interested, thank them and end the call.",
+    "voicemail_message": "Hi, this is Aria, an AI agent calling for Rajesh at Aria Agent Agency. If this voicemail sounds human, that's the demo — we build agents like me to handle calls, follow-ups, and admin work. Fifteen minutes at ariaagent.agency slash book-call. Thanks!"
+  }
+}

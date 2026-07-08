@@ -1,0 +1,26 @@
+{
+  "product_id": "dharma-solutions",
+  "product_name": "Dharma Solutions",
+  "website": "https://denialsdoctor.com/dharma",
+  "target_roles": ["Practice Manager", "Billing Manager", "Physician Owner", "CFO"],
+  "target_industries": ["Medical Practice", "Specialty Clinic", "Hospital", "Billing Company"],
+  "pain_points": ["billing staff turnover", "rising in-house billing costs", "AR days above 40", "coding backlogs", "credentialing delays"],
+  "value_proposition": "Full-service outsourced RCM and medical billing run by a 20-year operator — India-based team, US-grade compliance, at 40-60% lower cost than in-house",
+  "keywords_for_search": ["medical billing outsourcing", "RCM services", "billing company", "AR follow-up services", "medical coding services"],
+  "outreach_tone": "seasoned RCM operator who has run billing floors, direct and specific",
+  "from_email": "rajesh@denialsdoctor.com",
+  "from_domain": "denialsdoctor.com",
+  "signature": "Rajesh K\nFounder, Dharma Solutions\n20+ years running RCM operations\nhttps://denialsdoctor.com/dharma",
+  "calendar_link": "https://denialsdoctor.com/book-demo",
+  "email_templates": [
+    "dharma-solutions-email-1",
+    "dharma-solutions-email-2",
+    "dharma-solutions-email-3",
+    "dharma-solutions-email-4"
+  ],
+  "vapi_assistant": {
+    "first_message": "Hi, this is Aria calling on behalf of Rajesh at Dharma Solutions. Do you have a quick minute? I'm calling about your medical billing operations.",
+    "system_prompt": "You are calling on behalf of Dharma Solutions, an outsourced RCM and medical billing service run by a 20-year RCM operator. Your goal is to book a 15-minute call. Be brief and specific — AR days, denial rates, cost per claim. If they're not the right person, ask who manages billing. If not interested, thank them and end the call.",
+    "voicemail_message": "Hi, this is Aria calling for Rajesh at Dharma Solutions. We run full medical billing operations for practices — typically 40 to 60 percent cheaper than in-house, with better AR days. If billing costs or staffing are a pain, grab 15 minutes at denialsdoctor.com slash book-demo. Thanks!"
+  }
+}

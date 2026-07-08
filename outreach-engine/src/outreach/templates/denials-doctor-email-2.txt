@@ -1,0 +1,17 @@
+Subject: The 3 denial codes that eat most practices alive
+
+Hi {{first_name}},
+
+Following up on my note about denials at {{company_name}}.
+
+In two decades of RCM work, the same three denial families cause most of the write-offs I see:
+
+1. CO-97 (bundled/global) — usually appealable, almost never appealed
+2. CO-16 (missing info) — a 10-minute fix, but it sits in a queue for 40 days until timely filing kills it
+3. PR-204 (not covered) — often a registration error upstream, not a real non-coverage
+
+If you pulled your last 90 days of denials right now, I'd bet these three are 50%+ of the dollars. Denials Doctor does that pull automatically and tells you which ones are worth chasing.
+
+15 minutes and I'll walk you through it on your data, not a demo dataset: {{calendar_link}}
+
+{{signature}}

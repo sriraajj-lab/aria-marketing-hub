@@ -1,0 +1,13 @@
+Subject: Closing the loop — {{company_name}}
+
+Hi {{first_name}},
+
+I'll take the silence as "not right now," which is completely fair — timing matters more than tools.
+
+Before I close your file, one offer with no meeting required: send me a de-identified denial report (any format your PM system exports) and I'll reply with a written read on what's recoverable and what's dead. Takes me 20 minutes, costs you nothing, and you'll know if the problem is worth solving this year.
+
+If denials heat up later, the door's open: {{calendar_link}}
+
+Either way — good luck with {{pain_point}}. I've been on that side of the desk and it does get better.
+
+{{signature}}

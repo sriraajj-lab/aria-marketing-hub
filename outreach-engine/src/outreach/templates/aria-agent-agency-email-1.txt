@@ -1,0 +1,15 @@
+Subject: Noticed this at {{company_name}} — might save you a hire
+
+Hi {{first_name}},
+
+I came across this: {{pain_point}}
+
+Before you staff that, a thought from someone who has automated a lot of back-office work: most of what that role does — answering routine calls, chasing follow-ups, keying data between systems — an AI agent now does reliably, around the clock, for a fraction of a salary.
+
+That's what I build at Aria Agent Agency. Not chatbots — working agents wired into your actual phone line, inbox, and software. You keep humans for judgment; the agent eats the repetition.
+
+Worth a 15-minute call to see if the role you're filling is automatable? {{calendar_link}}
+
+If ops isn't your desk, who at {{company_name}} should I talk to?
+
+{{signature}}

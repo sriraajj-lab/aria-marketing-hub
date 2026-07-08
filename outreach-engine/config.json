@@ -1,0 +1,110 @@
+{
+  "_comment": "Global config for outreach-engine. Secrets come from environment variables (names below) — never commit real keys. Every *_env value is the NAME of the env var to read.",
+
+  "database": {
+    "path": "data/outreach.db",
+    "schema": "schema.sql"
+  },
+
+  "active_product": "denials-doctor",
+
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "public_base_url": "https://denialsdoctor.com",
+    "dashboard_path": "/dashboard"
+  },
+
+  "apis": {
+    "npi_registry": {
+      "base_url": "https://npiregistry.cms.hhs.gov/api/",
+      "version": "2.1",
+      "api_key_env": null,
+      "_note": "Free US government API. No key required."
+    },
+    "apollo": {
+      "base_url": "https://api.apollo.io/v1",
+      "api_key_env": "APOLLO_API_KEY",
+      "_note": "Set APOLLO_API_KEY in the environment. Free tier: 100 email credits/month."
+    },
+    "resend": {
+      "base_url": "https://api.resend.com",
+      "api_key_env": "RESEND_API_KEY",
+      "_note": "Set RESEND_API_KEY in the environment. Free tier: 100 emails/day."
+    },
+    "vapi": {
+      "base_url": "https://api.vapi.ai",
+      "api_key_env": "VAPI_API_KEY",
+      "phone_number_id_env": "VAPI_PHONE_NUMBER_ID",
+      "webhook_url": "https://denialsdoctor.com/api/webhooks/vapi",
+      "_note": "Set VAPI_API_KEY and VAPI_PHONE_NUMBER_ID in the environment."
+    },
+    "google_maps": {
+      "base_url": "https://maps.googleapis.com/maps/api/place",
+      "api_key_env": "GOOGLE_MAPS_API_KEY",
+      "_note": "Optional. When unset, maps-scraper falls back to best-effort HTML scraping."
+    },
+    "x_twitter": {
+      "base_url": "https://api.x.com/2",
+      "bearer_token_env": "X_BEARER_TOKEN",
+      "_note": "Optional. When unset, intent-signals skips X and uses Reddit only."
+    }
+  },
+
+  "email": {
+    "daily_limit_per_domain": 50,
+    "warming": {
+      "start_per_day": 5,
+      "increase_per_day": 5,
+      "ceiling_per_day": 50
+    },
+    "physical_address": "Rajesh K, Vizianagaram, Andhra Pradesh 535003, India",
+    "unsubscribe_path": "/api/unsubscribe",
+    "utm": {
+      "utm_source": "outreach-engine",
+      "utm_medium": "email"
+    },
+    "sequence_gap_days": 3
+  },
+
+  "scoring": {
+    "hot_min": 8,
+    "warm_min": 5
+  },
+
+  "outreach_rules": {
+    "require_human_approval": true,
+    "vapi_min_score": 8,
+    "linkedin_manual_only": true
+  },
+
+  "lead_sources": {
+    "npi": {
+      "specialties": ["Internal Medicine", "Pain Management", "Obstetrics & Gynecology", "Cardiovascular Disease", "Family Medicine"],
+      "states": ["TX", "FL", "GA", "NC", "AZ"],
+      "per_run_limit": 200
+    },
+    "indeed": {
+      "keywords": ["medical billing specialist", "denials manager", "AR follow-up", "revenue cycle analyst"],
+      "locations": ["Texas", "Florida", "Georgia", "North Carolina", "Arizona"],
+      "per_run_limit": 50
+    },
+    "maps": {
+      "queries": ["medical practice", "family medicine clinic", "internal medicine clinic"],
+      "cities": ["Dallas, TX", "Houston, TX", "Miami, FL", "Atlanta, GA", "Phoenix, AZ"],
+      "review_pain_keywords": ["billing", "bill", "charged", "insurance", "front desk", "wait time", "staff", "confusing"],
+      "per_run_limit": 40
+    },
+    "intent": {
+      "x_queries": ["medical billing nightmare", "denials killing us", "need RCM help", "practice management software sucks"],
+      "reddit_subreddits": ["medicine", "healthcare", "MedicalCoding"],
+      "reddit_queries": ["billing denials", "insurance denial", "revenue cycle", "medical billing"],
+      "per_run_limit": 30
+    }
+  },
+
+  "logging": {
+    "format": "json",
+    "stream": "stdout"
+  }
+}
